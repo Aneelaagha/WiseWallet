@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiseWallet.Api", "backend\WiseWallet.Api.csproj", "{792CFD8D-B5BC-F2D6-E699-2C505F80548C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{792CFD8D-B5BC-F2D6-E699-2C505F80548C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{792CFD8D-B5BC-F2D6-E699-2C505F80548C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{792CFD8D-B5BC-F2D6-E699-2C505F80548C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{792CFD8D-B5BC-F2D6-E699-2C505F80548C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8D4BE62E-B97E-42C2-AADD-ED1595A22988}
+	EndGlobalSection
+EndGlobal

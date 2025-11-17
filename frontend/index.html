@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WiseWallet – Subscription Insights</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: rgba(15, 23, 42, 0.96);
+      --border-subtle: rgba(148, 163, 184, 0.18);
+      --accent: #6366f1;
+      --accent-strong: #4f46e5;
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 45%, #000 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(to right, rgba(15,23,42,0.96), rgba(15,23,42,0.92));
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      padding: 0.9rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 6px 25px rgba(15, 23, 42, 0.8);
+    }
+
+    header .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #0ea5e9, #6366f1 55%, #a855f7 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 22px rgba(129, 140, 248, 0.65);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    header h1 span {
+      font-weight: 300;
+      color: var(--text-soft);
+      font-size: 0.7rem;
+      display: block;
+      letter-spacing: 0.16em;
+    }
+
+    header .tag {
+      font-size: 0.78rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: var(--text-soft);
+      background: radial-gradient(circle at top left, rgba(96,165,250,0.18), transparent);
+    }
+
+    main {
+      padding: 1.75rem 1.25rem 2.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.1fr);
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 800px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 1.1rem;
+      padding: 1.35rem 1.4rem;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card.simple::before {
+      display: none;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at top left, rgba(79,70,229,0.23), transparent 60%);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-main-title {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+      margin-bottom: 0.6rem;
+    }
+
+    .hero-heading {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .hero-sub {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      max-width: 27rem;
+      line-height: 1.6;
+      margin-bottom: 1.1rem;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: 0.4rem;
+    }
+
+    @media (max-width: 900px) {
+      .stats-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stats-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .stat-pill {
+      border-radius: 0.9rem;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(15,23,42,0.8));
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-soft);
+    }
+
+    .stat-value {
+      font-size: 0.98rem;
+      font-weight: 600;
+    }
+
+    .stat-note {
+      font-size: 0.7rem;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    .hero-highlight {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-top: 0.9rem;
+    }
+
+    .dot-pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34,197,94,0.7);
+      display: inline-block;
+      margin-right: 0.35rem;
+      vertical-align: middle;
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      60% { transform: scale(1.4); opacity: 0.4; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title span {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+    }
+
+    .table-wrapper {
+      margin-top: 0.4rem;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      overflow: hidden;
+      background: radial-gradient(circle at top left, rgba(30,64,175,0.28), rgba(15,23,42,0.96));
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    thead {
+      background: linear-gradient(to right, rgba(15,23,42,0.96), rgba(15,23,42,0.9));
+    }
+
+    th, td {
+      padding: 0.55rem 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.35);
+      white-space: nowrap;
+    }
+
+    th {
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: rgba(15,23,42,0.94);
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(17,24,39,0.98);
+    }
+
+    tbody tr:hover {
+      background: rgba(30, 64, 175, 0.55);
+    }
+
+    td {
+      color: #e5e7eb;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: 1px solid transparent;
+    }
+
+    .badge.active {
+      background: rgba(22,163,74,0.18);
+      color: #bbf7d0;
+      border-color: rgba(34,197,94,0.4);
+    }
+
+    .badge.cancelled {
+      background: rgba(239,68,68,0.18);
+      color: #fecaca;
+      border-color: rgba(248,113,113,0.5);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.7rem;
+      margin-top: 0.8rem;
+    }
+
+    @media (max-width: 900px) {
+      .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    input, select {
+      border-radius: 0.7rem;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.98), rgba(15,23,42,1));
+      color: var(--text-main);
+      padding: 0.45rem 0.7rem;
+      font-size: 0.85rem;
+      outline: none;
+      width: 100%;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.8);
+    }
+
+    button {
+      cursor: pointer;
+      border-radius: 0.8rem;
+      border: none;
+      font-size: 0.87rem;
+      font-weight: 500;
+      padding: 0.55rem 0.9rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.7);
+      transition: transform 0.08s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 16px 40px rgba(79, 70, 229, 0.85);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+    }
+
+    #message {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #a5b4fc;
+      min-height: 1rem;
+    }
+
+    .message-error {
+      color: #fecaca !important;
+    }
+
+    .footer-note {
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      text-align: right;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo-badge">W</div>
+      <div>
+        <h1>WiseWallet <span>Subscription Insights</span></h1>
+      </div>
+    </div>
+    <div class="tag">
+      Overview
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="card">
+        <div class="hero-main-title">Summary</div>
+        <div class="hero-heading">Recurring spend at a glance</div>
+        <p class="hero-sub">
+          Monitor active subscriptions, detect price changes, and keep upcoming renewals visible.
+        </p>
+
+        <div class="stats-row">
+          <div class="stat-pill">
+            <div class="stat-label">Subscriptions</div>
+            <div class="stat-value" id="stat-total">
+              –
+            </div>
+            <div class="stat-note">
+              Active and cancelled records.
+            </div>
+          </div>
+
+          <div class="stat-pill">
+            <div class="stat-label">Monthly spend</div>
+            <div class="stat-value" id="stat-monthly">
+              –
+            </div>
+            <div class="stat-note">
+              Normalized by billing interval.
+            </div>
+          </div>
+
+          <div class="stat-pill">
+            <div class="stat-label">Upcoming renewals</div>
+            <div class="stat-value" id="stat-renewals">
+              –
+            </div>
+            <div class="stat-note">
+              Within the next 30 days.
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-highlight">
+          <span class="dot-pulse"></span>
+          <span id="overview-text">Loading subscription data…</span>
+        </div>
+      </div>
+
+      <div class="card simple">
+        <div class="section-title">
+          <div>Quick actions</div>
+        </div>
+        <p style="font-size:0.87rem;color:var(--text-soft);margin-bottom:0.85rem;">
+          Populate the workspace with sample subscriptions or start by adding your own entries.
+        </p>
+        <button id="seed-btn" type="button">
+          Seed sample subscriptions
+        </button>
+        <p style="font-size:0.78rem;color:var(--text-soft);margin-top:0.7rem;">
+          Sample data includes streaming, music, and productivity subscriptions.
+        </p>
+      </div>
+    </section>
+
+    <section class="card simple" style="margin-bottom:1.5rem;">
+      <div class="section-title">
+        <div>Subscriptions <span>Current records</span></div>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Merchant</th>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Interval</th>
+              <th>Status</th>
+              <th>Price change</th>
+              <th>Next billing</th>
+            </tr>
+          </thead>
+          <tbody id="subs-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card simple">
+      <div class="section-title">
+        <div>Add subscription <span>New entry</span></div>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <input id="merchant" placeholder="Merchant" />
+        </div>
+        <div>
+          <input id="category" placeholder="Category (optional)" />
+        </div>
+        <div>
+          <input id="amount" type="number" step="0.01" placeholder="Amount" />
+        </div>
+        <div>
+          <select id="interval">
+            <option value="Monthly">Monthly</option>
+            <option value="Yearly">Yearly</option>
+          </select>
+        </div>
+        <div>
+          <select id="status">
+            <option value="Active">Active</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:0.8rem;display:flex;gap:0.7rem;align-items:center;flex-wrap:wrap;">
+        <input id="nextBilling" type="date" />
+        <button id="add-btn" type="button">
+          Add subscription
+        </button>
+      </div>
+
+      <p id="message"></p>
+
+      <div class="footer-note">
+        Data is stored in PostgreSQL via the WiseWallet API.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE_URL = "http://localhost:5000";
+
+    async function fetchOverview() {
+      const overviewText = document.getElementById("overview-text");
+      const statTotal = document.getElementById("stat-total");
+      const statMonthly = document.getElementById("stat-monthly");
+      const statRenewals = document.getElementById("stat-renewals");
+
+      try {
+        const res = await fetch(API_BASE_URL + "/api/insights/overview");
+        if (!res.ok) {
+          overviewText.textContent = "Unable to load insights (" + res.status + ").";
+          return;
+        }
+        const data = await res.json();
+
+        statTotal.textContent = data.totalSubscriptions ?? 0;
+        statMonthly.textContent = data.monthlySpend != null ? "$" + data.monthlySpend.toFixed(2) : "$0.00";
+        statRenewals.textContent = data.upcomingRenewals ?? 0;
+
+        if ((data.totalSubscriptions ?? 0) === 0) {
+          overviewText.textContent = "No subscriptions found. Add a record below or seed sample data.";
+        } else {
+          const priceIncreases = data.priceIncreasesDetected ?? 0;
+          overviewText.textContent =
+            `${data.activeSubscriptions} active · ${data.cancelledSubscriptions} cancelled · ` +
+            `${priceIncreases} with recent price increases.`;
+        }
+      } catch (err) {
+        console.error(err);
+        overviewText.textContent =
+          "Failed to reach insights API. Confirm the service is running on " + API_BASE_URL + ".";
+      }
+    }
+
+    async function fetchSubs() {
+      const tbody = document.getElementById("subs-body");
+      tbody.innerHTML = "";
+      try {
+        const res = await fetch(API_BASE_URL + "/api/subscriptions");
+        if (!res.ok) {
+          const row = document.createElement("tr");
+          const cell = document.createElement("td");
+          cell.colSpan = 7;
+          cell.textContent = "Unable to load subscriptions.";
+          tbody.appendChild(row).appendChild(cell);
+          return;
+        }
+        const data = await res.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+          const row = document.createElement("tr");
+          const cell = document.createElement("td");
+          cell.colSpan = 7;
+          cell.textContent = "No subscriptions available.";
+          tbody.appendChild(row).appendChild(cell);
+          return;
+        }
+
+        data.forEach(sub => {
+          const tr = document.createElement("tr");
+          const nextBilling = sub.nextBillingDate
+            ? new Date(sub.nextBillingDate).toLocaleDateString()
+            : "-";
+
+          const priceChange = sub.hasPriceIncreased ? "Increased" : "Stable";
+
+          tr.innerHTML = `
+            <td>${sub.merchantName}</td>
+            <td>${sub.category || "-"}</td>
+            <td>$${sub.amount.toFixed(2)}</td>
+            <td>${sub.billingInterval}</td>
+            <td><span class="badge ${sub.status.toLowerCase()}">${sub.status}</span></td>
+            <td>${priceChange}</td>
+            <td>${nextBilling}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error(err);
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 7;
+        cell.textContent = "Error communicating with API.";
+        tbody.appendChild(row).appendChild(cell);
+      }
+    }
+
+    async function addSub() {
+      const merchantEl = document.getElementById("merchant");
+      const categoryEl = document.getElementById("category");
+      const amountEl = document.getElementById("amount");
+      const intervalEl = document.getElementById("interval");
+      const statusEl = document.getElementById("status");
+      const nextBillingEl = document.getElementById("nextBilling");
+      const msg = document.getElementById("message");
+
+      msg.classList.remove("message-error");
+      msg.textContent = "";
+
+      const merchant = merchantEl.value.trim();
+      const category = categoryEl.value.trim();
+      const amount = parseFloat(amountEl.value);
+      const billingInterval = intervalEl.value;
+      const status = statusEl.value;
+      const nextBillingRaw = nextBillingEl.value;
+
+      if (!merchant || isNaN(amount)) {
+        msg.textContent = "Enter a merchant name and valid amount.";
+        msg.classList.add("message-error");
+        return;
+      }
+
+      let nextBillingDate = null;
+      if (nextBillingRaw) {
+        nextBillingDate = new Date(nextBillingRaw).toISOString();
+      }
+
+      try {
+        const res = await fetch(API_BASE_URL + "/api/subscriptions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            merchantName: merchant,
+            category,
+            amount,
+            billingInterval,
+            status,
+            nextBillingDate
+          })
+        });
+
+        if (!res.ok) {
+          msg.textContent = "Unable to create subscription. Check API.";
+          msg.classList.add("message-error");
+          return;
+        }
+
+        merchantEl.value = "";
+        categoryEl.value = "";
+        amountEl.value = "";
+        nextBillingEl.value = "";
+
+        msg.textContent = "Subscription added.";
+        await Promise.all([fetchSubs(), fetchOverview()]);
+      } catch (err) {
+        console.error(err);
+        msg.textContent = "Error communicating with API.";
+        msg.classList.add("message-error");
+      }
+    }
+
+    async function seedDemo() {
+      const msg = document.getElementById("message");
+      msg.classList.remove("message-error");
+      msg.textContent = "";
+
+      try {
+        const res = await fetch(API_BASE_URL + "/api/dev/seed", {
+          method: "POST"
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          msg.textContent = text || "Sample records already added.";
+          return;
+        }
+        msg.textContent = "Sample subscriptions added.";
+        await Promise.all([fetchSubs(), fetchOverview()]);
+      } catch (err) {
+        console.error(err);
+        msg.textContent = "Error seeding data.";
+        msg.classList.add("message-error");
+      }
+    }
+
+    document.getElementById("add-btn").addEventListener("click", addSub);
+    document.getElementById("seed-btn").addEventListener("click", seedDemo);
+
+    (async () => {
+      await Promise.all([fetchSubs(), fetchOverview()]);
+    })();
+  </script>
+</body>
+</html>
