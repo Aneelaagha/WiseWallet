@@ -1,25 +1,33 @@
-# WiseWallet – Subscription Insights Dashboard
+🧠💰 WiseWallet – Subscription Insights Dashboard
 
-WiseWallet is a full-stack web application that helps users understand and manage their recurring subscriptions.
+A clean full-stack web app that helps users track, analyze, and control their recurring subscriptions.
 
-## Features
+🚀 Features
 
-- Track recurring subscriptions (merchant, amount, billing interval, status)
-- Detect price increases on existing subscriptions
-- Calculate normalized monthly spend and annualized spend
-- Highlight upcoming renewals within 30 days
-- Seed sample data for demos
-- PostgreSQL-backed ASP.NET Core Web API
-- Clean HTML/CSS dashboard frontend (no framework required)
-- Docker setup for running PostgreSQL + API + frontend together
-- GitHub Actions CI pipeline (builds backend & frontend, builds Docker images)
+📊 Track merchants, billing intervals, and subscription status
 
-## Tech Stack
+📈 Detect price increases automatically
 
-- **Backend:** C#, ASP.NET Core 8 minimal APIs, Entity Framework Core, PostgreSQL
-- **Frontend:** HTML, CSS, vanilla JavaScript
-- **Database:** PostgreSQL
-- **DevOps:** Docker, docker-compose, GitHub Actions
+💵 View normalized monthly & annual spend
+
+🔔 Highlight renewals due within 30 days
+
+🧪 Includes demo seed data
+
+🐳 Full Docker setup (DB + API + Frontend)
+
+🔧 GitHub Actions CI (build + test + Docker images)
+
+Tech Stack
+![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
+![.NET 8](https://img.shields.io/badge/.NET%208-512BD4?logo=dotnet&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+
 
 ## Running locally (without Docker)
 
