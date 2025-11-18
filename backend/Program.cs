@@ -5,11 +5,12 @@ using WiseWallet.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // 🔐 Load PostgreSQL connection string safely
-// This reads from:
-// - backend/appsettings.json (local development)
-// - environment variables on Render (deployment)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// - On Render: from env var DATABASE_URL
+// - Local: from appsettings.json -> "ConnectionStrings:DefaultConnection"
+var connectionString =
+    Environment.GetEnvironmentVariable("DATABASE_URL") ??
+    builder.Configuration.GetConnectionString("DefaultConnection") ??
+    throw new InvalidOperationException("Database connection string not configured.");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -30,7 +31,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ⭐ ENSURE DATABASE + TABLES EXIST
+// ⭐ Ensure database + tables exist
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -46,7 +47,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// ROOT CHECK
+// Root check
 app.MapGet("/", () => Results.Ok(new { message = "WiseWallet API is running" }));
 
 // ----------------------
