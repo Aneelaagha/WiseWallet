@@ -4,20 +4,20 @@ using WiseWallet.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Use Neon PostgreSQL directly
+// 🔐 Load PostgreSQL connection string safely
+// This reads from:
+// - backend/appsettings.json (local development)
+// - environment variables on Render (deployment)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(
-        "Host=ep-frosty-frog-adpbkdkg-pooler.c-2.us-east-1.aws.neon.tech;" +
-        "Port=5432;" +
-        "Database=neondb;" +
-        "Username=neondb_owner;" +
-        "Password=npg_7B2muASHzyqX;" +
-        "SSL Mode=Require;" +
-        "Trust Server Certificate=true;"));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -30,13 +30,14 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ✅ This is the important part: create DB + tables if they don't exist
+// ⭐ ENSURE DATABASE + TABLES EXIST
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
 
+// MIDDLEWARE
 app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
@@ -45,7 +46,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// ROOT CHECK
 app.MapGet("/", () => Results.Ok(new { message = "WiseWallet API is running" }));
+
+// ----------------------
+// 📌 API ENDPOINTS
+// ----------------------
 
 // Get all subscriptions
 app.MapGet("/api/subscriptions", async (AppDbContext db) =>
@@ -86,14 +92,12 @@ app.MapPost("/api/subscriptions", async (AppDbContext db, Subscription input) =>
     return Results.Created($"/api/subscriptions/{sub.Id}", sub);
 });
 
-// Update subscription & detect price increase
+// Update subscription
 app.MapPut("/api/subscriptions/{id:guid}", async (AppDbContext db, Guid id, Subscription update) =>
 {
     var existing = await db.Subscriptions.FindAsync(id);
     if (existing is null)
-    {
         return Results.NotFound();
-    }
 
     existing.PreviousAmount = existing.Amount;
     existing.Amount = update.Amount;
@@ -158,9 +162,7 @@ app.MapGet("/api/insights/overview", async (AppDbContext db) =>
 app.MapPost("/api/dev/seed", async (AppDbContext db) =>
 {
     if (await db.Subscriptions.AnyAsync())
-    {
         return Results.BadRequest("Sample data already exists.");
-    }
 
     var now = DateTime.UtcNow;
 
@@ -230,4 +232,5 @@ app.MapPost("/api/dev/seed", async (AppDbContext db) =>
     return Results.Ok(samples);
 });
 
+// Run app
 app.Run();
