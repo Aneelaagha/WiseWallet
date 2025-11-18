@@ -1,6 +1,8 @@
 🧠💰 WiseWallet – Subscription Insights Dashboard
 
 Modern dashboard for tracking subscriptions, detecting price changes, and managing recurring costs.)
+![WiseWallet Dashboard](https://raw.githubusercontent.com/yourusername/yourrepo/main/assets/dashboard.png)
+
 
 Tech Stack
 ![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
