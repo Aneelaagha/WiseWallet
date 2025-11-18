@@ -1,21 +1,25 @@
-# Use official .NET SDK image for building the app
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
-
-# Copy everything
-COPY . .
-
-# Restore & publish
-RUN dotnet restore
-RUN dotnet publish -c Release -o out
-
-# Runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build /app/out .
-
-# Expose port
-EXPOSE 8080
-
-# Start the API
-ENTRYPOINT ["dotnet", "WiseWallet.Api.dll"]
+# ---- Build stage ----
+    FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+    WORKDIR /app
+    
+    # Copy csproj and restore as separate layer
+    COPY WiseWallet.Api.csproj ./
+    RUN dotnet restore "WiseWallet.Api.csproj"
+    
+    # Copy the rest of the source and publish
+    COPY . .
+    RUN dotnet publish "WiseWallet.Api.csproj" -c Release -o /app/publish
+    
+    # ---- Runtime stage ----
+    FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+    WORKDIR /app
+    
+    # Copy published app from build stage
+    COPY --from=build /app/publish .
+    
+    # Render expects the app to listen on 0.0.0.0:8080
+    ENV ASPNETCORE_URLS=http://+:8080
+    EXPOSE 8080
+    
+    ENTRYPOINT ["dotnet", "WiseWallet.Api.dll"]
+    
