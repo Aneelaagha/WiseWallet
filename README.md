@@ -1,22 +1,6 @@
 🧠💰 WiseWallet – Subscription Insights Dashboard
 
-A clean full-stack web app that helps users track, analyze, and control their recurring subscriptions.
-
-🚀 Features
-
-📊 Track merchants, billing intervals, and subscription status
-
-📈 Detect price increases automatically
-
-💵 View normalized monthly & annual spend
-
-🔔 Highlight renewals due within 30 days
-
-🧪 Includes demo seed data
-
-🐳 Full Docker setup (DB + API + Frontend)
-
-🔧 GitHub Actions CI (build + test + Docker images)
+Modern dashboard for tracking subscriptions, detecting price changes, and managing recurring costs.)
 
 Tech Stack
 ![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
