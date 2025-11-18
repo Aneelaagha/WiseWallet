@@ -4,13 +4,10 @@ using WiseWallet.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 Load PostgreSQL connection string safely
-// - On Render: from env var DATABASE_URL
-// - Local: from appsettings.json -> "ConnectionStrings:DefaultConnection"
-var connectionString =
-    Environment.GetEnvironmentVariable("DATABASE_URL") ??
-    builder.Configuration.GetConnectionString("DefaultConnection") ??
-    throw new InvalidOperationException("Database connection string not configured.");
+// ✅ Load PostgreSQL connection string ONLY from configuration
+// Render will supply: ConnectionStrings__DefaultConnection 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -38,7 +35,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-// MIDDLEWARE
+// Middleware
 app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
@@ -47,11 +44,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Root check
 app.MapGet("/", () => Results.Ok(new { message = "WiseWallet API is running" }));
 
 // ----------------------
-// 📌 API ENDPOINTS
+// API ENDPOINTS
 // ----------------------
 
 // Get all subscriptions
@@ -119,10 +115,11 @@ app.MapPut("/api/subscriptions/{id:guid}", async (AppDbContext db, Guid id, Subs
     return Results.Ok(existing);
 });
 
-// Insights overview
+// Insights
 app.MapGet("/api/insights/overview", async (AppDbContext db) =>
 {
     var subs = await db.Subscriptions.ToListAsync();
+
     if (subs.Count == 0)
     {
         return Results.Ok(new
@@ -145,7 +142,8 @@ app.MapGet("/api/insights/overview", async (AppDbContext db) =>
 
     int priceIncreases = active.Count(s => s.HasPriceIncreased);
     DateTime cutoff = DateTime.UtcNow.Date.AddDays(30);
-    int upcomingRenewals = active.Count(s => s.NextBillingDate.HasValue && s.NextBillingDate.Value.Date <= cutoff);
+    int upcomingRenewals = active.Count(s =>
+        s.NextBillingDate.HasValue && s.NextBillingDate.Value.Date <= cutoff);
 
     return Results.Ok(new
     {
@@ -159,7 +157,7 @@ app.MapGet("/api/insights/overview", async (AppDbContext db) =>
     });
 });
 
-// Seed sample data
+// Dev seed data
 app.MapPost("/api/dev/seed", async (AppDbContext db) =>
 {
     if (await db.Subscriptions.AnyAsync())
@@ -233,5 +231,4 @@ app.MapPost("/api/dev/seed", async (AppDbContext db) =>
     return Results.Ok(samples);
 });
 
-// Run app
 app.Run();
