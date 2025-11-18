@@ -4,10 +4,13 @@ using WiseWallet.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Load PostgreSQL connection string ONLY from configuration
-// Render will supply: ConnectionStrings__DefaultConnection 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// Load PostgreSQL connection string:
+// 1. Render -> DATABASE_URL
+// 2. Local -> appsettings.json -> ConnectionStrings:DefaultConnection
+var connectionString =
+    Environment.GetEnvironmentVariable("DATABASE_URL") ??
+    builder.Configuration.GetConnectionString("DefaultConnection") ??
+    throw new InvalidOperationException("Database connection string not configured.");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -15,7 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// CORS
+// Enable CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -28,14 +31,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ⭐ Ensure database + tables exist
+// Ensure DB + tables exist
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
 
-// Middleware
 app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
@@ -44,19 +46,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Health check
 app.MapGet("/", () => Results.Ok(new { message = "WiseWallet API is running" }));
-
-// ----------------------
-// API ENDPOINTS
-// ----------------------
 
 // Get all subscriptions
 app.MapGet("/api/subscriptions", async (AppDbContext db) =>
 {
-    var subs = await db.Subscriptions
-        .OrderBy(s => s.MerchantName)
-        .ToListAsync();
-
+    var subs = await db.Subscriptions.OrderBy(s => s.MerchantName).ToListAsync();
     return Results.Ok(subs);
 });
 
@@ -85,7 +81,6 @@ app.MapPost("/api/subscriptions", async (AppDbContext db, Subscription input) =>
 
     db.Subscriptions.Add(sub);
     await db.SaveChangesAsync();
-
     return Results.Created($"/api/subscriptions/{sub.Id}", sub);
 });
 
@@ -93,8 +88,7 @@ app.MapPost("/api/subscriptions", async (AppDbContext db, Subscription input) =>
 app.MapPut("/api/subscriptions/{id:guid}", async (AppDbContext db, Guid id, Subscription update) =>
 {
     var existing = await db.Subscriptions.FindAsync(id);
-    if (existing is null)
-        return Results.NotFound();
+    if (existing is null) return Results.NotFound();
 
     existing.PreviousAmount = existing.Amount;
     existing.Amount = update.Amount;
@@ -115,7 +109,7 @@ app.MapPut("/api/subscriptions/{id:guid}", async (AppDbContext db, Guid id, Subs
     return Results.Ok(existing);
 });
 
-// Insights
+// Insights overview
 app.MapGet("/api/insights/overview", async (AppDbContext db) =>
 {
     var subs = await db.Subscriptions.ToListAsync();
@@ -142,8 +136,7 @@ app.MapGet("/api/insights/overview", async (AppDbContext db) =>
 
     int priceIncreases = active.Count(s => s.HasPriceIncreased);
     DateTime cutoff = DateTime.UtcNow.Date.AddDays(30);
-    int upcomingRenewals = active.Count(s =>
-        s.NextBillingDate.HasValue && s.NextBillingDate.Value.Date <= cutoff);
+    int upcomingRenewals = active.Count(s => s.NextBillingDate.HasValue && s.NextBillingDate.Value.Date <= cutoff);
 
     return Results.Ok(new
     {
@@ -155,80 +148,6 @@ app.MapGet("/api/insights/overview", async (AppDbContext db) =>
         priceIncreasesDetected = priceIncreases,
         upcomingRenewals
     });
-});
-
-// Dev seed data
-app.MapPost("/api/dev/seed", async (AppDbContext db) =>
-{
-    if (await db.Subscriptions.AnyAsync())
-        return Results.BadRequest("Sample data already exists.");
-
-    var now = DateTime.UtcNow;
-
-    var samples = new List<Subscription>
-    {
-        new Subscription
-        {
-            Id = Guid.NewGuid(),
-            MerchantName = "Netflix",
-            Category = "Streaming",
-            Amount = 19.99m,
-            PreviousAmount = 15.99m,
-            BillingInterval = "Monthly",
-            Status = "Active",
-            CreatedAt = now.AddMonths(-8),
-            NextBillingDate = now.AddDays(10),
-            HasPriceIncreased = true,
-            MonthlyEquivalent = 19.99m
-        },
-        new Subscription
-        {
-            Id = Guid.NewGuid(),
-            MerchantName = "Spotify",
-            Category = "Music",
-            Amount = 9.99m,
-            PreviousAmount = 9.99m,
-            BillingInterval = "Monthly",
-            Status = "Active",
-            CreatedAt = now.AddYears(-1),
-            NextBillingDate = now.AddDays(5),
-            HasPriceIncreased = false,
-            MonthlyEquivalent = 9.99m
-        },
-        new Subscription
-        {
-            Id = Guid.NewGuid(),
-            MerchantName = "Adobe Creative Cloud",
-            Category = "Productivity",
-            Amount = 239.88m,
-            PreviousAmount = 199.99m,
-            BillingInterval = "Yearly",
-            Status = "Active",
-            CreatedAt = now.AddYears(-2),
-            NextBillingDate = now.AddDays(25),
-            HasPriceIncreased = true,
-            MonthlyEquivalent = Math.Round(239.88m / 12m, 2)
-        },
-        new Subscription
-        {
-            Id = Guid.NewGuid(),
-            MerchantName = "Disney+",
-            Category = "Streaming",
-            Amount = 7.99m,
-            PreviousAmount = 7.99m,
-            BillingInterval = "Monthly",
-            Status = "Cancelled",
-            CreatedAt = now.AddMonths(-6),
-            NextBillingDate = null,
-            HasPriceIncreased = false,
-            MonthlyEquivalent = 7.99m
-        }
-    };
-
-    await db.Subscriptions.AddRangeAsync(samples);
-    await db.SaveChangesAsync();
-
-    return Results.Ok(samples);
 });
 
 app.Run();
