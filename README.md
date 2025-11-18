@@ -2,7 +2,7 @@
 
 Modern dashboard for tracking subscriptions, detecting price changes, and managing recurring costs.)
 
-https://ibb.co/wFDRG3rL
+<a href="https://ibb.co/wFDRG3rL"><img src="https://i.ibb.co/cSz1fMXv/Screenshot-2025-11-18-at-6-14-45-PM.png" alt="Screenshot-2025-11-18-at-6-14-45-PM" border="0" /></a>
 
 
 Tech Stack
