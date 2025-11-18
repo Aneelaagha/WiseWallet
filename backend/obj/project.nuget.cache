@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "xewM7Wvcooc=",
+  "dgSpecHash": "QAJ96mHEqho=",
   "success": true,
   "projectFilePath": "/Users/aneelaagha/Downloads/WiseWallet/backend/WiseWallet.Api.csproj",
   "expectedPackageFiles": [
@@ -15,7 +15,6 @@
     "/Users/aneelaagha/.nuget/packages/microsoft.entityframeworkcore.abstractions/8.0.0/microsoft.entityframeworkcore.abstractions.8.0.0.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/microsoft.entityframeworkcore.analyzers/8.0.0/microsoft.entityframeworkcore.analyzers.8.0.0.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/microsoft.entityframeworkcore.design/8.0.0/microsoft.entityframeworkcore.design.8.0.0.nupkg.sha512",
-    "/Users/aneelaagha/.nuget/packages/microsoft.entityframeworkcore.inmemory/8.0.0/microsoft.entityframeworkcore.inmemory.8.0.0.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/microsoft.entityframeworkcore.relational/8.0.0/microsoft.entityframeworkcore.relational.8.0.0.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/microsoft.extensions.caching.abstractions/8.0.0/microsoft.extensions.caching.abstractions.8.0.0.nupkg.sha512",
@@ -30,6 +29,8 @@
     "/Users/aneelaagha/.nuget/packages/microsoft.extensions.primitives/8.0.0/microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/microsoft.openapi/1.2.3/microsoft.openapi.1.2.3.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/mono.texttemplating/2.2.1/mono.texttemplating.2.2.1.nupkg.sha512",
+    "/Users/aneelaagha/.nuget/packages/npgsql/8.0.0/npgsql.8.0.0.nupkg.sha512",
+    "/Users/aneelaagha/.nuget/packages/npgsql.entityframeworkcore.postgresql/8.0.0/npgsql.entityframeworkcore.postgresql.8.0.0.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/swashbuckle.aspnetcore/6.5.0/swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/swashbuckle.aspnetcore.swagger/6.5.0/swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "/Users/aneelaagha/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.5.0/swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",

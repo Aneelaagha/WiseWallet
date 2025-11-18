@@ -4,9 +4,16 @@ using WiseWallet.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Use InMemory database instead of PostgreSQL
+// ✅ Use Neon PostgreSQL directly
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("WiseWalletDb"));
+    options.UseNpgsql(
+        "Host=ep-frosty-frog-adpbkdkg-pooler.c-2.us-east-1.aws.neon.tech;" +
+        "Port=5432;" +
+        "Database=neondb;" +
+        "Username=neondb_owner;" +
+        "Password=npg_7B2muASHzyqX;" +
+        "SSL Mode=Require;" +
+        "Trust Server Certificate=true;"));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -23,7 +30,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// No connection to Postgres anymore – InMemory will be created automatically
+// ✅ This is the important part: create DB + tables if they don't exist
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
 
 app.UseCors("AllowAll");
 
